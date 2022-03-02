@@ -9,31 +9,27 @@ import java.util.Arrays;
 
 public class StringListImpl implements StringList{
 
-    private String[] stringList;
+    private final String[] stringList;
     private int size;
 
     public StringListImpl(int size) {
         this.stringList = new String[size];
-        this.size = 0;
     }
 
-    private void optimize() {
-        int index = 0;
-        String[] optimizeArray = new String[stringList.length];
-        for (String string : stringList) {
-            if (string != null) {
-                optimizeArray[index] = string;
-                index++;
-            }
+    private void shift(int index) {
+        for (int i = index; i < size - 1; i++) {
+            stringList[index] = stringList[i + 1];
+            index++;
         }
-        this.stringList = Arrays.copyOf(optimizeArray, stringList.length);
+        stringList[size - 1] = null;
+        size--;
     }
 
     @Override
     public void print() {
         for (int i = 0; i < size; i++) {
             System.out.print(stringList[i]);
-            if (i != stringList.length - 1) {
+            if (i != size - 1) {
                 System.out.print(", ");
             }
         }
@@ -42,7 +38,10 @@ public class StringListImpl implements StringList{
 
     @Override
     public String add(String item) {
-        if(size > stringList.length) {
+        if (item == null) {
+            throw new NullPointerException("NullPointerException: Item is Null");
+        }
+        if(size >= stringList.length) {
             throw new ArrayIsFullException("ArrayIsFullException: Array is full!");
         }
         stringList[size++] = item;
@@ -51,11 +50,17 @@ public class StringListImpl implements StringList{
 
     @Override
     public String add(int index, String item) {
+        if (item == null) {
+            throw new NullPointerException("NullPointerException: Item is Null");
+        }
         if (index < 0 || index > size) {
             throw new ArrayIndexOutOfBoundsException("ArrayIndexOutOfBoundsException index = " + index + " not exist!");
         }
+        if(size >= stringList.length) {
+            throw new ArrayIsFullException("ArrayIsFullException: Array is full!");
+        }
         size++;
-        for (int i = size; i > index; i--) {
+        for (int i = size - 1; i > index; i--) {
             stringList[i] = stringList[i - 1];
         }
         stringList[index] = item;
@@ -64,6 +69,9 @@ public class StringListImpl implements StringList{
 
     @Override
     public String set(int index, String item) {
+        if (item == null) {
+            throw new NullPointerException("NullPointerException: Item is Null");
+        }
         if (index < 0 || index > size) {
             throw new ArrayIndexOutOfBoundsException("ArrayIndexOutOfBoundsException index =  " + index + " not exist!");
         }
@@ -73,11 +81,13 @@ public class StringListImpl implements StringList{
 
     @Override
     public String remove(String item) {
+        if (item == null) {
+            throw new NullPointerException("NullPointerException: Item is Null");
+        }
         for (int i = 0; i < size; i++) {
-            if (stringList[i] != null && stringList[i].equals(item)) {
-                size--;
+            if (stringList[i].equals(item)) {
                 stringList[i] = null;
-                optimize();
+                shift(i);
                 return item;
             }
         }
@@ -91,13 +101,15 @@ public class StringListImpl implements StringList{
         }
         String removeItem = stringList[index];
         stringList[index] = null;
-        size--;
-        optimize();
+        shift(index);
         return removeItem;
     }
 
     @Override
     public boolean contains(String item) {
+        if (item == null) {
+            throw new NullPointerException("NullPointerException: Item is Null");
+        }
         for (int i = 0; i < size; i++) {
             if (stringList[i].equals(item)) {
                 return true;
@@ -108,6 +120,9 @@ public class StringListImpl implements StringList{
 
     @Override
     public int indexOf(String item) {
+        if (item == null) {
+            throw new NullPointerException("NullPointerException: Item is Null");
+        }
         for (int i = 0; i < size; i++) {
             if (stringList[i].equals(item)) {
                 return i;
@@ -118,6 +133,9 @@ public class StringListImpl implements StringList{
 
     @Override
     public int lastIndexOf(String item) {
+        if (item == null) {
+            throw new NullPointerException("NullPointerException: Item is Null");
+        }
         for (int i = size - 1; i >= 0 ; i--) {
             if (stringList[i].equals(item)) {
                 return i;
@@ -131,19 +149,11 @@ public class StringListImpl implements StringList{
         if (index < 0 || index > size) {
             throw new ArrayIndexOutOfBoundsException("ArrayIndexOutOfBoundsException index = " + index + " not exist!");
         }
-        for (int i = 0; i < size; i++) {
-            if (stringList[i].equals(stringList[index])) {
-                return stringList[index];
-            }
-        }
-        throw new NotFoundException("NotFoundException by index = " + index);
+        return stringList[index];
     }
 
     @Override
     public boolean equals(StringList otherList) {
-        if (otherList == null){
-            throw new NullPointerException("NullPointerException: stringList is Null");
-        }
         if(size != otherList.size()){
             return false;
         }
