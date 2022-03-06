@@ -16,6 +16,33 @@ public class IntegerListImpl implements IntegerList{
         this.integerList = new Integer[size];
     }
 
+    private void shift(int index) {
+        for (int i = index; i < size - 1; i++) {
+            integerList[index] = integerList[i + 1];
+            index++;
+        }
+        integerList[size - 1] = null;
+        size--;
+    }
+
+    private boolean binarySearch(int[] sortArr, int number) {
+        int min = 0;
+        int max = sortArr.length - 1;
+
+        while (min < max) {
+            int mid = (min + max) / 2;
+            if (sortArr[mid] == number) {
+                return true;
+            }
+            if (number < sortArr[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void generateRandomArray() {
         java.util.Random random = new java.util.Random();
@@ -25,15 +52,6 @@ public class IntegerListImpl implements IntegerList{
         }
     }
 
-
-    private void shift(int index) {
-        for (int i = index; i < size - 1; i++) {
-            integerList[index] = integerList[i + 1];
-            index++;
-        }
-        integerList[size - 1] = null;
-        size--;
-    }
 
     @Override
     public void print() {
@@ -106,21 +124,7 @@ public class IntegerListImpl implements IntegerList{
     @Override
     public boolean contains(int[] arr, int number) {
         int[] sortArr = sortSelection(arr);
-        int min = 0;
-        int max = arr.length - 1;
-
-        while (min < max) {
-            int mid = (min + max) / 2;
-            if (sortArr[mid] == number) {
-                return true;
-            }
-            if (number < sortArr[mid]) {
-                max = mid - 1;
-            } else {
-                min = mid + 1;
-            }
-        }
-        return false;
+        return binarySearch(sortArr, number);
     }
 
     @Override
