@@ -2,8 +2,6 @@ package ru.skypro;
 
 public interface IntegerList {
 
-    void generateRandomArray();
-
     int add(int number);
 
     int add(int index, int number);
@@ -14,7 +12,7 @@ public interface IntegerList {
 
     int removeByIndex(int index);
 
-    boolean contains(int arr[], int number);
+    boolean contains(int number);
 
     int indexOf(int number);
 
@@ -39,4 +37,4 @@ public interface IntegerList {
     int[] sortSelection(int[] listOfInt);
 
     int[] sortInsertion(int[] listOfInt);
-}
+ }

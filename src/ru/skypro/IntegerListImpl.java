@@ -1,7 +1,6 @@
 package ru.skypro;
 
 import ru.skypro.exception.ArrayIndexOutOfBoundsException;
-import ru.skypro.exception.ArrayIsFullException;
 import ru.skypro.exception.NotFoundException;
 import ru.skypro.exception.NullPointerException;
 
@@ -9,7 +8,7 @@ import java.util.Arrays;
 
 public class IntegerListImpl implements IntegerList{
 
-    private final Integer[] integerList;
+    private Integer[] integerList;
     private int size;
 
     public IntegerListImpl(int size) {
@@ -29,7 +28,7 @@ public class IntegerListImpl implements IntegerList{
         int min = 0;
         int max = sortArr.length - 1;
 
-        while (min < max) {
+        while (min <= max) {
             int mid = (min + max) / 2;
             if (sortArr[mid] == number) {
                 return true;
@@ -43,15 +42,39 @@ public class IntegerListImpl implements IntegerList{
         return false;
     }
 
-    @Override
-    public void generateRandomArray() {
-        java.util.Random random = new java.util.Random();
-        for (int i = 0; i < size; i++) {
-            int temp = random.nextInt(100_000) + 100_000;
-            add(i, temp);
-        }
+    private void grow() {
+        Integer[] newIntegerList = new Integer[(int) (integerList.length * 1.5)];
+        System.arraycopy(integerList, 0, newIntegerList, 0, integerList.length);
+        integerList = newIntegerList;
     }
 
+    private static void swapElements(int[] arr, int left, int right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
+    }
+
+    private static int partition(int[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                swapElements(arr, i, j);
+            }
+        }
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    public static int[] quickSort(int[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
+        }
+        return arr;
+    }
 
     @Override
     public void print() {
@@ -67,7 +90,7 @@ public class IntegerListImpl implements IntegerList{
     @Override
     public int add(int number) {
         if(size >= integerList.length) {
-            throw new ArrayIsFullException("ArrayIsFullException: Array is full!");
+            grow();
         }
         integerList[size++] = number;
         return number;
@@ -79,7 +102,7 @@ public class IntegerListImpl implements IntegerList{
             throw new ArrayIndexOutOfBoundsException("ArrayIndexOutOfBoundsException index = " + index + " not exist!");
         }
         if(size >= integerList.length) {
-            throw new ArrayIsFullException("ArrayIsFullException: Array is full!");
+            grow();
         }
         size++;
         for (int i = size - 1; i > index; i--) {
@@ -122,8 +145,9 @@ public class IntegerListImpl implements IntegerList{
     }
 
     @Override
-    public boolean contains(int[] arr, int number) {
-        int[] sortArr = sortSelection(arr);
+    public boolean contains(int number) {
+        int[] arr = toArray();
+        int[] sortArr = quickSort(arr, 0 , arr.length - 1);
         return binarySearch(sortArr, number);
     }
 
@@ -186,7 +210,11 @@ public class IntegerListImpl implements IntegerList{
 
     @Override
     public int[] toArray() {
-        return Arrays.stream(integerList).mapToInt(Integer::intValue).toArray();
+        int[] arr = new int[size];
+        for (int i = 0; i < size; i++) {
+            arr[i] = integerList[i];
+        }
+        return arr;
     }
 
     @Override
