@@ -1,7 +1,5 @@
 package ru.skypro;
 
-import java.util.Arrays;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -13,26 +11,18 @@ public class Main {
             integerList.add(generateRandom());
         }
 
-        int[] arr1 = Arrays.copyOf(integerList.toArray(), integerList.toArray().length);
-        int[] arr2 = Arrays.copyOf(integerList.toArray(), integerList.toArray().length);
-        int[] arr3 = Arrays.copyOf(integerList.toArray(), integerList.toArray().length);
+        integerList.add(45);
+        integerList.add(123);
+        integerList.add(455);
+        integerList.add(457);
+        integerList.print();
 
-        System.out.println("Пузырьковый метод:");
-        long start = System.currentTimeMillis();
-        integerList.sortBubble(arr1);
-        System.out.println(System.currentTimeMillis() - start);
+        integerList.sortBubble(integerList.toArray());
 
-        System.out.println("Метод выбора:");
-        start = System.currentTimeMillis();
-        integerList.sortSelection(arr2);
-        System.out.println(System.currentTimeMillis() - start);
+        System.out.println("integerList.contains(45) = " + integerList.contains(45));
+        System.out.println("integerList.contains(457) = " + integerList.contains(457));
 
-        System.out.println("Метод вставки:");
-        start = System.currentTimeMillis();
-        integerList.sortSelection(arr3);
-        System.out.println(System.currentTimeMillis() - start);
 
-        System.out.println("integerList.contains(arr1, 60) = " + integerList.contains(arr1, 60));
     }
 
     public static int generateRandom() {
